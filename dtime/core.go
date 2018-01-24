@@ -3,6 +3,7 @@ package dtime
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -24,6 +25,19 @@ func (t JSONShortTime) MarshalJSON() ([]byte, error) {
 	return t.doMarshalJSON(ShortTimeLayout)
 }
 
+func (t JSONShortTime) ToDB() interface{} {
+	return int64(t.JSONTime)
+}
+
+func (t *JSONShortTime) FromDB(b []byte) error {
+	st, err := strconv.ParseInt(string(b), 10, 64)
+	if err != nil {
+		return err
+	}
+	*t = JSONTime(st).AsShortTime()
+	return nil
+}
+
 // UnmarshalJSON unmarshal string to JSONTime
 func (t *JSONShortTime) UnmarshalJSON(b []byte) error {
 	jt, err := t.doUnmarshalJSON(ShortTimeLayout, b)
@@ -39,6 +53,19 @@ type JSONMiddleTime struct{ JSONTime }
 
 func (t JSONMiddleTime) String() string {
 	return t.Format(MiddleTimeLayout)
+}
+
+func (t JSONMiddleTime) ToDB() interface{} {
+	return int64(t.JSONTime)
+}
+
+func (t *JSONMiddleTime) FromDB(b []byte) error {
+	st, err := strconv.ParseInt(string(b), 10, 64)
+	if err != nil {
+		return err
+	}
+	*t = JSONTime(st).AsMiddleTime()
+	return nil
 }
 
 // MarshalJSON outputs JSON presentation
